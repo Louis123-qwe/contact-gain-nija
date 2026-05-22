@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Contact Gain Nija</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --green-deep: #1a6b3c;
+    --green-mid: #2d9e5f;
+    --green-light: #4dc98a;
+    --yellow: #f5c842;
+    --yellow-light: #ffe680;
+    --white: #ffffff;
+    --off-white: #f9fdf6;
+    --text-dark: #0d2b1a;
+    --text-mid: #2d5a3d;
+    --shadow: 0 8px 40px rgba(26,107,60,0.18);
+    --radius: 18px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--off-white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── LOADING SCREEN ── */
+  #loader {
+    position: fixed; inset: 0; z-index: 9999;
+    background: linear-gradient(145deg, #0d2b1a 0%, #1a6b3c 50%, #2d9e5f 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 24px;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+  #loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+  #loader-logo {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--yellow);
+    box-shadow: 0 0 40px rgba(245,200,66,0.5);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  #loader-logo-placeholder {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--yellow) 0%, var(--green-light) 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem; font-weight: 900;
+    color: var(--green-deep);
+    border: 4px solid rgba(255,255,255,0.3);
+    box-shadow: 0 0 40px rgba(245,200,66,0.4);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  #loader h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 900;
+    color: var(--white);
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  #loader p { color: rgba(255,255,255,0.65); font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  .loader-bar {
+    width: 200px; height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 99px; overflow: hidden;
+  }
+  .loader-bar-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--yellow), var(--green-light));
+    border-radius: 99px;
+    animation: loadBar 2.2s ease forwards;
+  }
+  @keyframes loadBar { to { width: 100%; } }
+  @keyframes pulse { 0%,100%{transform:scale(1);box-shadow:0 0 30px rgba(245,200,66,0.4)} 50%{transform:scale(1.05);box-shadow:0 0 50px rgba(245,200,66,0.7)} }
+
+  /* ── BACKGROUND ── */
+  .bg-mesh {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 0%, rgba(77,201,138,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 90% 100%, rgba(245,200,66,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 70% at 50% 50%, rgba(45,158,95,0.07) 0%, transparent 70%),
+      linear-gradient(180deg, #f0faf4 0%, #f9fdf6 100%);
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative; z-index: 10;
+    text-align: center;
+    padding: 56px 24px 20px;
+  }
+  .brand-badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, var(--green-deep), var(--green-mid));
+    color: white; font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    padding: 7px 20px; border-radius: 99px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 16px rgba(26,107,60,0.3);
+  }
+  .brand-badge::before { content: '✦'; color: var(--yellow); }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 7vw, 4rem);
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(135deg, var(--green-deep) 0%, var(--green-mid) 45%, var(--yellow) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 14px;
+  }
+  header p {
+    font-size: 1.1rem; color: var(--text-mid);
+    font-weight: 300; letter-spacing: 0.02em;
+  }
+
+  /* ── CARD ── */
+  .card-wrap {
+    position: relative; z-index: 10;
+    display: flex; justify-content: center;
+    padding: 16px 20px 60px;
+  }
+  .card {
+    width: 100%; max-width: 520px;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(20px);
+    border-radius: 28px;
+    border: 1.5px solid rgba(77,201,138,0.25);
+    box-shadow: var(--shadow), 0 2px 0 rgba(255,255,255,0.9) inset;
+    padding: 44px 40px 40px;
+    animation: slideUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.3s both;
+  }
+  @keyframes slideUp { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
+
+  .card-header {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 32px;
+  }
+  .card-icon {
+    width: 50px; height: 50px;
+    background: linear-gradient(135deg, var(--green-mid), var(--green-deep));
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    box-shadow: 0 6px 20px rgba(26,107,60,0.3);
+    flex-shrink: 0;
+  }
+  .card-header-text h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem; font-weight: 700;
+    color: var(--text-dark);
+  }
+  .card-header-text p { font-size: 0.84rem; color: #6a9a7c; margin-top: 2px; }
+
+  /* ── FORM ── */
+  .field { margin-bottom: 22px; }
+  label {
+    display: block;
+    font-size: 0.82rem; font-weight: 600;
+    color: var(--text-mid); letter-spacing: 0.06em;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  label span { color: #e05252; margin-left: 2px; }
+
+  input[type="text"], input[type="tel"] {
+    width: 100%; padding: 14px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; color: var(--text-dark);
+    background: rgba(245,252,248,0.9);
+    border: 1.5px solid rgba(77,201,138,0.3);
+    border-radius: 12px;
+    outline: none;
+    transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+  }
+  input[type="text"]:focus, input[type="tel"]:focus {
+    border-color: var(--green-mid);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(45,158,95,0.12);
+  }
+  input.error { border-color: #e05252 !important; box-shadow: 0 0 0 4px rgba(224,82,82,0.1) !important; }
+
+  .phone-row { display: flex; gap: 10px; }
+  .phone-row select {
+    flex: 0 0 140px;
+    padding: 14px 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem; color: var(--text-dark);
+    background: rgba(245,252,248,0.9);
+    border: 1.5px solid rgba(77,201,138,0.3);
+    border-radius: 12px; outline: none; cursor: pointer;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%232d9e5f' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+  }
+  .phone-row select:focus {
+    border-color: var(--green-mid);
+    box-shadow: 0 0 0 4px rgba(45,158,95,0.12);
+  }
+  .phone-row input { flex: 1; }
+
+  .field-note { font-size: 0.78rem; color: #8fb89e; margin-top: 6px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    width: 100%; padding: 15px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 600;
+    border: none; border-radius: 12px;
+    cursor: pointer; letter-spacing: 0.03em;
+    transition: transform 0.18s, box-shadow 0.18s, filter 0.18s;
+    position: relative; overflow: hidden;
+  }
+  .btn:active { transform: scale(0.97); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--green-deep) 0%, var(--green-mid) 100%);
+    color: white;
+    box-shadow: 0 6px 24px rgba(26,107,60,0.35);
+  }
+  .btn-primary:hover { box-shadow: 0 10px 32px rgba(26,107,60,0.45); filter: brightness(1.07); transform: translateY(-1px); }
+
+  .btn-whatsapp {
+    background: linear-gradient(135deg, #128c7e 0%, #25d366 100%);
+    color: white;
+    box-shadow: 0 6px 24px rgba(37,211,102,0.3);
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin-top: 14px;
+  }
+  .btn-whatsapp:hover { box-shadow: 0 10px 32px rgba(37,211,102,0.45); transform: translateY(-1px); }
+  .btn-whatsapp svg { flex-shrink: 0; }
+
+  .btn-secondary {
+    background: linear-gradient(135deg, rgba(245,200,66,0.15), rgba(77,201,138,0.15));
+    color: var(--green-deep);
+    border: 1.5px solid rgba(45,158,95,0.3);
+    margin-top: 12px;
+  }
+  .btn-secondary:hover { background: rgba(45,158,95,0.12); transform: translateY(-1px); }
+
+  /* ── NOTIFICATION ── */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+    z-index: 9998; min-width: 300px; max-width: 90vw;
+    padding: 16px 22px;
+    border-radius: 14px; font-size: 0.93rem; font-weight: 500;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.4s;
+    opacity: 0;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast.success { background: linear-gradient(135deg, #1a6b3c, #2d9e5f); color: white; }
+  .toast.error { background: linear-gradient(135deg, #b91c1c, #ef4444); color: white; }
+  .toast.warn { background: linear-gradient(135deg, #92400e, #d97706); color: white; }
+  .toast-icon { font-size: 1.2rem; }
+
+  /* ── SUCCESS STATE ── */
+  #success-panel {
+    display: none;
+    text-align: center;
+    animation: slideUp 0.5s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .success-icon {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, var(--green-mid), var(--green-light));
+    border-radius: 50%; margin: 0 auto 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    box-shadow: 0 8px 32px rgba(45,158,95,0.35);
+  }
+  #success-panel h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 700; color: var(--text-dark);
+    margin-bottom: 8px;
+  }
+  #success-panel p { color: #6a9a7c; font-size: 0.95rem; margin-bottom: 28px; }
+
+  /* ── DIVIDER ── */
+  .divider {
+    display: flex; align-items: center; gap: 12px; margin: 20px 0;
+  }
+  .divider-line { flex: 1; height: 1px; background: rgba(77,201,138,0.25); }
+  .divider-text { font-size: 0.75rem; color: #9ac3ab; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index: 10;
+    text-align: center; padding: 0 0 30px;
+    color: #aec8b5; font-size: 0.8rem;
+  }
+
+  /* ── SHIMMER on BUTTON ── */
+  .btn::after {
+    content: '';
+    position: absolute; top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    transform: skewX(-15deg);
+    transition: left 0.5s;
+  }
+  .btn:hover::after { left: 160%; }
+
+  /* ── LOADING SPINNER ── */
+  .spinner {
+    width: 20px; height: 20px;
+    border: 2.5px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .btn-inner { display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+  @media (max-width: 560px) {
+    .card { padding: 32px 22px 28px; }
+    .phone-row select { flex: 0 0 120px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div id="loader">
+
+
+ 
+       <img id="loader-logo" src="logo.png" alt="Logo"> 
+  <h1>Contact Gain Nija</h1>
+  <p>Loading your experience...</p>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+</div>
+
+<div class="bg-mesh"></div>
+
+<header>
+  <div class="brand-badge">Premium Contact Exchange</div>
+  <h1>Contact Gain Nija</h1>
+  <p>Submit your contact to join our exclusive community</p>
+</header>
+
+<div class="card-wrap">
+  <div class="card">
+
+    <!-- FORM PANEL -->
+    <div id="form-panel">
+      <div class="card-header">
+        <div class="card-icon">📇</div>
+        <div class="card-header-text">
+          <h2>Submit Your Contact</h2>
+          <p>Fill in your details below</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="name">Full Name <span>*</span></label>
+        <input type="text" id="name" placeholder="e.g. John Adeyemi" autocomplete="name"/>
+      </div>
+
+      <div class="field">
+        <label for="phone">Phone Number <span>*</span></label>
+        <div class="phone-row">
+          <select id="country-code" title="Select country code">
+            <option value="">-- Code --</option>
+            <option value="+1">🇺🇸 +1 (US)</option>
+            <option value="+1-CA">🇨🇦 +1 (CA)</option>
+            <option value="+44">🇬🇧 +44 (UK)</option>
+            <option value="+234" selected>🇳🇬 +234 (NG)</option>
+            <option value="+233">🇬🇭 +233 (GH)</option>
+            <option value="+27">🇿🇦 +27 (SA)</option>
+            <option value="+254">🇰🇪 +254 (KE)</option>
+            <option value="+255">🇹🇿 +255 (TZ)</option>
+            <option value="+256">🇺🇬 +256 (UG)</option>
+            <option value="+251">🇪🇹 +251 (ET)</option>
+            <option value="+237">🇨🇲 +237 (CM)</option>
+            <option value="+225">🇨🇮 +225 (CI)</option>
+            <option value="+221">🇸🇳 +221 (SN)</option>
+            <option value="+212">🇲🇦 +212 (MA)</option>
+            <option value="+20">🇪🇬 +20 (EG)</option>
+            <option value="+91">🇮🇳 +91 (IN)</option>
+            <option value="+92">🇵🇰 +92 (PK)</option>
+            <option value="+880">🇧🇩 +880 (BD)</option>
+            <option value="+86">🇨🇳 +86 (CN)</option>
+            <option value="+81">🇯🇵 +81 (JP)</option>
+            <option value="+82">🇰🇷 +82 (KR)</option>
+            <option value="+49">🇩🇪 +49 (DE)</option>
+            <option value="+33">🇫🇷 +33 (FR)</option>
+            <option value="+39">🇮🇹 +39 (IT)</option>
+            <option value="+34">🇪🇸 +34 (ES)</option>
+            <option value="+7">🇷🇺 +7 (RU)</option>
+            <option value="+55">🇧🇷 +55 (BR)</option>
+            <option value="+52">🇲🇽 +52 (MX)</option>
+            <option value="+57">🇨🇴 +57 (CO)</option>
+            <option value="+971">🇦🇪 +971 (AE)</option>
+            <option value="+966">🇸🇦 +966 (SA)</option>
+            <option value="+61">🇦🇺 +61 (AU)</option>
+          </select>
+          <input type="tel" id="phone" placeholder="8012345678" autocomplete="tel-national"/>
+        </div>
+        <div class="field-note">⚠️ A country code is required for your number to be valid.</div>
+      </div>
+
+      <button class="btn btn-primary" id="submit-btn" onclick="submitContact()">
+        <div class="btn-inner">
+          <span id="btn-text">Submit Contact</span>
+          <div class="spinner" id="btn-spinner"></div>
+        </div>
+      </button>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-text">Community</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <button class="btn btn-whatsapp" onclick="openWhatsapp()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Join WhatsApp Community
+      </button>
+    </div>
+
+    <!-- SUCCESS PANEL -->
+    <div id="success-panel">
+      <div class="success-icon">✅</div>
+      <h3>Contact Submitted!</h3>
+      <p>Thank you! Your contact has been saved successfully. Join our WhatsApp community to access the full contact file.</p>
+
+      <button class="btn btn-whatsapp" onclick="openWhatsapp()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Join WhatsApp to Access Contact File
+      </button>
+
+      <button class="btn btn-secondary" onclick="resetForm()">
+        ↩ Upload Another Contact
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<footer>© 2025 Contact Gain Nija · All rights reserved</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon"></span>
+  <span id="toast-msg"></span>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDtj8CthY1OhMAMAUPOq1Zkj30soK5CLr0",
+    authDomain: "ludek-marketplace-3bcde.firebaseapp.com",
+    projectId: "ludek-marketplace-3bcde",
+    storageBucket: "ludek-marketplace-3bcde.firebasestorage.app",
+    messagingSenderId: "61300786658",
+    appId: "1:61300786658:web:24bb41f2c65facfa5ba5bb"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window._db = db;
+  window._addDoc = addDoc;
+  window._collection = collection;
+  window._serverTimestamp = serverTimestamp;
+</script>
+
+<script>
+  const WHATSAPP_LINK = "https://chat.whatsapp.com/L8giFJ7rKP81qO5akvgIMk";
+
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('loader').classList.add('hidden');
+    }, 2500);
+  });
+
+  function showToast(msg, type = 'success') {
+    const icons = { success: '✅', error: '❌', warn: '⚠️' };
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    document.getElementById('toast-icon').textContent = icons[type];
+    t.className = 'toast ' + type;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 4000);
+  }
+
+  async function submitContact() {
+    const name = document.getElementById('name').value.trim();
+    const countryCode = document.getElementById('country-code').value;
+    const phone = document.getElementById('phone').value.trim();
+
+    if (!name) {
+      document.getElementById('name').classList.add('error');
+      showToast('Please enter your full name.', 'error'); return;
+    }
+    document.getElementById('name').classList.remove('error');
+
+    if (!countryCode) {
+      document.getElementById('country-code').style.borderColor = '#e05252';
+      showToast('⚠️ Please provide a country code for your phone number.', 'warn'); return;
+    }
+    document.getElementById('country-code').style.borderColor = '';
+
+    if (!phone || !/^\d{5,15}$/.test(phone)) {
+      document.getElementById('phone').classList.add('error');
+      showToast('Please enter a valid phone number (digits only).', 'error'); return;
+    }
+    document.getElementById('phone').classList.remove('error');
+
+    if (phone.startsWith('+')) {
+      document.getElementById('phone').classList.add('error');
+      showToast('Enter number without +. Select country code from the dropdown.', 'warn'); return;
+    }
+
+    const fullPhone = countryCode.replace('-CA','') + phone;
+
+    const btn = document.getElementById('submit-btn');
+    document.getElementById('btn-text').textContent = 'Submitting...';
+    document.getElementById('btn-spinner').style.display = 'block';
+    btn.disabled = true;
+
+    try {
+      let attempts = 0;
+      while (!window._db && attempts < 20) {
+        await new Promise(r => setTimeout(r, 200));
+        attempts++;
+      }
+      if (!window._db) throw new Error('Firebase not ready. Check your config.');
+
+      await window._addDoc(window._collection(window._db, 'contacts'), {
+        name,
+        phone: fullPhone,
+        countryCode: countryCode.replace('-CA',''),
+        rawPhone: phone,
+        submittedAt: window._serverTimestamp()
+      });
+
+      document.getElementById('form-panel').style.display = 'none';
+      document.getElementById('success-panel').style.display = 'block';
+      showToast('Contact submitted successfully! 🎉', 'success');
+
+    } catch (err) {
+      console.error(err);
+      showToast('Submission failed: ' + err.message, 'error');
+      document.getElementById('btn-text').textContent = 'Submit Contact';
+      document.getElementById('btn-spinner').style.display = 'none';
+      btn.disabled = false;
+    }
+  }
+
+  function resetForm() {
+    document.getElementById('name').value = '';
+    document.getElementById('phone').value = '';
+    document.getElementById('country-code').value = '+234';
+    document.getElementById('success-panel').style.display = 'none';
+    document.getElementById('form-panel').style.display = 'block';
+    document.getElementById('btn-text').textContent = 'Submit Contact';
+    document.getElementById('btn-spinner').style.display = 'none';
+    document.getElementById('submit-btn').disabled = false;
+  }
+
+  function openWhatsapp() {
+    window.open(WHATSAPP_LINK, '_blank');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    ['name','phone'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => {
+        document.getElementById(id).classList.remove('error');
+      });
+    });
+  });
+
+  window.submitContact = submitContact;
+  window.resetForm = resetForm;
+  window.openWhatsapp = openWhatsapp;
+</script>
+</body>
+</html>
